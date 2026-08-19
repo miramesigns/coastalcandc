@@ -1,0 +1,9 @@
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+service-account*.json
+
+# Node tooling
+node_modules/
+.netlify/
