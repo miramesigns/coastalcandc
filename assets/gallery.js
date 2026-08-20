@@ -168,12 +168,37 @@ function renderFeatured(projects) {
   document.querySelector('[data-featured-gallery-status]')?.remove();
 }
 
+function setStatus(message, { isError = false } = {}) {
+  if (!status) return;
+  status.hidden = false;
+  status.textContent = message;
+  status.classList.toggle('gallery-note-error', isError);
+}
+
 function showEmptyState() {
-  if (status) status.textContent = 'Project photos will be added soon.';
+  setStatus('Project photos will be added soon.');
   if (jumpNav) {
     jumpNav.hidden = true;
     jumpNav.replaceChildren();
   }
+}
+
+function showRetryState(message) {
+  if (!status) return;
+  setStatus(message, { isError: true });
+  if (document.querySelector('[data-gallery-retry]')) return;
+
+  const retry = document.createElement('button');
+  retry.type = 'button';
+  retry.className = 'button button-compact';
+  retry.dataset.galleryRetry = '';
+  retry.textContent = 'Try again';
+  retry.addEventListener('click', () => loadGallery());
+  status.insertAdjacentElement('afterend', retry);
+}
+
+function clearRetry() {
+  document.querySelector('[data-gallery-retry]')?.remove();
 }
 
 function renderGallery(projects) {
@@ -181,21 +206,43 @@ function renderGallery(projects) {
     renderJumpNav(projects);
     fullGallery.replaceChildren(...projects.map(renderProject));
     status?.remove();
+    clearRetry();
   }
 
   if (featuredGallery) renderFeatured(projects);
 }
 
 async function loadGallery() {
+  clearRetry();
+  setStatus('Loading project photos…');
+
+  const slowTimer = window.setTimeout(() => {
+    setStatus('Still loading project photos — first load can take a few seconds…');
+  }, 2500);
+
+  const controller = new AbortController();
+  const hardTimer = window.setTimeout(() => controller.abort(), 25000);
+
   try {
-    const response = await fetch('/.netlify/functions/gallery-feed');
+    const response = await fetch('/.netlify/functions/gallery-feed', { signal: controller.signal });
     if (!response.ok) throw new Error(`Gallery response ${response.status}`);
     const { projects = [] } = await response.json();
     if (!projects.length) return showEmptyState();
     renderGallery(projects);
   } catch (error) {
     console.error('Could not load the project gallery.', error);
-    showEmptyState();
+    if (fullGallery) {
+      showRetryState(
+        error?.name === 'AbortError'
+          ? 'The gallery is taking too long to respond. Please try again.'
+          : 'Could not load project photos right now.',
+      );
+    } else {
+      showEmptyState();
+    }
+  } finally {
+    window.clearTimeout(slowTimer);
+    window.clearTimeout(hardTimer);
   }
 }
 
