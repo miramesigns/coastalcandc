@@ -12,6 +12,7 @@ test('buildGalleryPayload keeps images grouped by their approved project folders
       { id: 'image-1', name: 'Kitchen island.jpg', mimeType: 'image/jpeg', parents: ['project-kitchen'], createdTime: '2026-08-18T12:00:00Z' },
       { id: 'notes-1', name: 'Customer notes.pdf', mimeType: 'application/pdf', parents: ['project-kitchen'] },
       { id: 'image-2', name: 'Built-in shelves.png', mimeType: 'image/png', parents: ['project-builtins'], createdTime: '2026-08-19T12:00:00Z' },
+      { id: 'heic-1', name: 'Phone photo.HEIC', mimeType: 'image/heif', parents: ['project-builtins'] },
     ],
   });
 
