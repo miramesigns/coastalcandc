@@ -18,7 +18,7 @@ export default async function handler() {
     const rootItems = await listFolderChildren(folderId, token);
     const projects = rootItems.filter((item) => item.mimeType === 'application/vnd.google-apps.folder');
     const fileGroups = await Promise.all(projects.map((project) => listFolderChildren(project.id, token)));
-    return json(buildGalleryPayload({ projects, files: fileGroups.flat() }));
+    return json(buildGalleryPayload({ rootFolderId: folderId, projects, files: [...rootItems, ...fileGroups.flat()] }));
   } catch (error) {
     console.error('Gallery feed failed', error);
     return json({ error: 'The project gallery is temporarily unavailable.' }, 503);

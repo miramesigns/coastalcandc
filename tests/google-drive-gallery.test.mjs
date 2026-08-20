@@ -40,6 +40,18 @@ test('buildGalleryPayload omits unapproved files and projects without photos', (
   assert.deepEqual(payload, { projects: [] });
 });
 
+test('buildGalleryPayload publishes direct root images as Recent Work', () => {
+  const payload = buildGalleryPayload({
+    rootFolderId: 'gallery-root',
+    projects: [],
+    files: [{ id: 'root-photo', name: 'Finished cabinet.jpg', mimeType: 'image/jpeg', parents: ['gallery-root'] }],
+  });
+
+  assert.deepEqual(payload, {
+    projects: [{ id: 'recent-work', name: 'Recent Work', photos: [{ id: 'root-photo', alt: 'Finished cabinet', src: '/.netlify/functions/gallery-image?id=root-photo' }] }],
+  });
+});
+
 test('getGalleryConfiguration accepts a folder and complete service account credentials', () => {
   const serviceAccount = { client_email: 'gallery-bot@example.iam.gserviceaccount.com', private_key: '-----BEGIN PRIVATE KEY-----\\nkey\\n-----END PRIVATE KEY-----\\n' };
 

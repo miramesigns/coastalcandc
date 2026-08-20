@@ -66,7 +66,8 @@ export async function getApprovedImage(fileId, rootFolderId, token, fetchImpl = 
 
   const projects = await listFolderChildren(rootFolderId, token, fetchImpl);
   const projectIds = new Set(projects.filter((file) => file.mimeType === 'application/vnd.google-apps.folder').map((file) => file.id));
-  if (!metadata.parents?.some((parentId) => projectIds.has(parentId))) throw new Error('Requested image is not in an approved project folder.');
+  const allowedParents = new Set([rootFolderId, ...projectIds]);
+  if (!metadata.parents?.some((parentId) => allowedParents.has(parentId))) throw new Error('Requested image is not in an approved gallery folder.');
   return metadata;
 }
 
