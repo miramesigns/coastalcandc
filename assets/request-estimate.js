@@ -19,7 +19,7 @@ form?.addEventListener('submit', async (event) => {
   button.disabled = true; status.textContent = 'Sending…';
   const data = Object.fromEntries(new FormData(form));
   try {
-    const response = await fetch('/.netlify/functions/request-estimate', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) });
+    const response = await fetch('/api/request-estimate', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error);
     form.reset();

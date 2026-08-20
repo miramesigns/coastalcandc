@@ -224,7 +224,7 @@ async function loadGallery() {
   const hardTimer = window.setTimeout(() => controller.abort(), 25000);
 
   try {
-    const response = await fetch('/.netlify/functions/gallery-feed', { signal: controller.signal });
+    const response = await fetch('/api/gallery-feed');
     if (!response.ok) throw new Error(`Gallery response ${response.status}`);
     const { projects = [] } = await response.json();
     if (!projects.length) return showEmptyState();

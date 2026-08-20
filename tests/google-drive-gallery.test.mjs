@@ -21,12 +21,12 @@ test('buildGalleryPayload keeps images grouped by their approved project folders
       {
         id: 'project-kitchen',
         name: 'Kitchen Remodel',
-        photos: [{ id: 'image-1', alt: 'Kitchen island', src: '/.netlify/functions/gallery-image?id=image-1' }],
+        photos: [{ id: 'image-1', alt: 'Kitchen island', src: '/api/gallery-image?id=image-1' }],
       },
       {
         id: 'project-builtins',
         name: 'Custom Built-ins',
-        photos: [{ id: 'image-2', alt: 'Built-in shelves', src: '/.netlify/functions/gallery-image?id=image-2' }],
+        photos: [{ id: 'image-2', alt: 'Built-in shelves', src: '/api/gallery-image?id=image-2' }],
       },
     ],
   });
@@ -49,7 +49,7 @@ test('buildGalleryPayload publishes direct root images as Recent Work', () => {
   });
 
   assert.deepEqual(payload, {
-    projects: [{ id: 'recent-work', name: 'Recent Work', photos: [{ id: 'root-photo', alt: 'Finished cabinet', src: '/.netlify/functions/gallery-image?id=root-photo' }] }],
+    projects: [{ id: 'recent-work', name: 'Recent Work', photos: [{ id: 'root-photo', alt: 'Finished cabinet', src: '/api/gallery-image?id=root-photo' }] }],
   });
 });
 
