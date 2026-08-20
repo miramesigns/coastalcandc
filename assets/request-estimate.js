@@ -1,6 +1,8 @@
 const form = document.querySelector('[data-estimate-form]');
 const status = document.querySelector('[data-form-status]');
 const phone = form?.querySelector('[name=phone]');
+const success = document.querySelector('[data-form-success]');
+const reset = document.querySelector('[data-form-reset]');
 
 function formatPhone(value) {
   const digits = value.replace(/\D/g, '').slice(0, 10);
@@ -20,7 +22,16 @@ form?.addEventListener('submit', async (event) => {
     const response = await fetch('/.netlify/functions/request-estimate', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error);
-    form.reset(); status.textContent = 'Thank you — your request was received. We’ll be in touch soon.';
+    form.reset();
+    form.hidden = true;
+    success.hidden = false;
   } catch (error) { status.textContent = error.message || 'Unable to send your request. Please call us instead.'; }
   finally { button.disabled = false; }
+});
+
+reset?.addEventListener('click', (event) => {
+  event.preventDefault();
+  success.hidden = true;
+  form.hidden = false;
+  form.querySelector('[name=name]').focus();
 });
