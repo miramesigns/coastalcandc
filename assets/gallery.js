@@ -133,7 +133,8 @@ function renderProject(project, index) {
 
   header.append(title, meta);
 
-  const [lead, ...rest] = project.photos;
+  const visiblePhotos = project.photos.slice(0, 12);
+  const [lead, ...rest] = visiblePhotos;
   const leadWrap = document.createElement('div');
   leadWrap.className = 'project-chapter-lead';
   const leadButton = image(lead, { button: true, className: 'project-chapter-lead-img' });
@@ -151,6 +152,27 @@ function renderProject(project, index) {
       grid.append(shot);
     });
     section.append(grid);
+
+    if (project.photos.length > visiblePhotos.length) {
+      const more = document.createElement('button');
+      more.type = 'button';
+      more.className = 'button button-compact gallery-load-more';
+      more.textContent = `Load more work (${project.photos.length - visiblePhotos.length})`;
+      let nextIndex = visiblePhotos.length;
+      more.addEventListener('click', () => {
+        const next = project.photos.slice(nextIndex, nextIndex + 12);
+        next.forEach((photo, photoIndex) => {
+          const shot = image(photo, { button: true });
+          shot.addEventListener('click', () => openLightbox(project.photos, nextIndex + photoIndex));
+          grid.append(shot);
+        });
+        nextIndex += next.length;
+        const remaining = project.photos.length - nextIndex;
+        more.textContent = remaining ? `Load more work (${remaining})` : 'All work loaded';
+        more.disabled = remaining === 0;
+      });
+      section.append(more);
+    }
   }
 
   return section;
