@@ -157,7 +157,10 @@ function renderProject(project, index) {
       const more = document.createElement('button');
       more.type = 'button';
       more.className = 'button button-compact gallery-load-more';
-      more.textContent = `Load more work (${project.photos.length - visiblePhotos.length})`;
+      const setMoreLabel = (remaining) => {
+        more.innerHTML = `<span aria-hidden="true">▦</span><span>${remaining ? `Load more work (${remaining})` : 'All work loaded'}</span>`;
+      };
+      setMoreLabel(project.photos.length - visiblePhotos.length);
       let nextIndex = visiblePhotos.length;
       more.addEventListener('click', () => {
         const next = project.photos.slice(nextIndex, nextIndex + 12);
@@ -168,7 +171,7 @@ function renderProject(project, index) {
         });
         nextIndex += next.length;
         const remaining = project.photos.length - nextIndex;
-        more.textContent = remaining ? `Load more work (${remaining})` : 'All work loaded';
+        setMoreLabel(remaining);
         more.disabled = remaining === 0;
       });
       section.append(more);
